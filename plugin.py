@@ -48,27 +48,28 @@ class BasePlugin:
     dataIntervalCount = 0
     
     #Homewizard kWh meter variables contains "name of element", [initial value,initial value to generate device, device-ID,
-    # multiplying factor for the right shown value, W,Wh,A, percentage]
-    # device-ID=0 never generate device, !=0 means if Mode4=1 change False in True
+    # multiplying factor for the right shown value, W,Wh,VA,A, percentage]
+    # device-ID<=0 never generate device, >0 means generate device if True, but if Mode4=1 change False in True
+    # example values show values once read from the 3F meter
     #: Not used in plugin
     elements={"wifi_ssid":["",False,0,1],                     # example value "ABCDE"
     #: [Number] The strength of the Wi-Fi signal, generate device, device-ID
     "wifi_strength":[-1,True,180,1],                          # example value "95" is percentage
-    #: [Number] The realy used power of the 3 phases, generate device, -(part of device-ID)
+    #: [Number] The counter of the really used power of the 3 phases, generate device, -(part of device-ID)
     "total_power_import_kwh":[-1,False,-101,1000],               # example value in kWh "305.332"
-    #: [Number] The realy used power of the 3 phases, generate device, -(part of device-ID)
+    #: [Number] The counter of the really used power of the 3 phases, generate device, -(part of device-ID)
     "total_power_import_t1_kwh":[-1,False,-101,1000],            # example value in kWh "305.332"
-    #: [Number] The realy exported power of the 3 phases, generate device, -(part of device-ID)
+    #: [Number] The counter of the really exported power of the 3 phases, generate device, -(part of device-ID)
     "total_power_export_kwh":[-1,False,-101,1000],               # example value in kWh "0"
-    #: [Number] The realy exported power of the 3 phases, generate device, -(parts of device-ID)
+    #: [Number] The counter of the really exported power of the 3 phases, generate device, -(parts of device-ID)
     "total_power_export_t1_kwh":[-1,False,-101,1000],            # example value in kWh "0"
-    #: [Number] The realy used power of the 3 phases, generate device, device-ID
+    #: [Number] The really currently used power of the 3 phases, generate device, device-ID
     "active_power_w":[-1000000.0,True,101,1],                 # example value in W "3718"
-    #: [Number] The realy used power of phase 1, generate device, device-ID
+    #: [Number] The currently really used power of phase 1, generate device, device-ID
     "active_power_l1_w":[-1000000.0,True,105,1],              # example value in W "7.088"
-    #: [Number] The realy used power of phase32, generate device, device-ID
+    #: [Number] The really currently used power of phase 2, generate device, device-ID
     "active_power_l2_w":[-1000000.0,True,106,1],              # example value in W "3711"
-    #: [Number] The realy used power of phase 1, generate device, device-ID
+    #: [Number] The really currently used power of phase 1, generate device, device-ID
     "active_power_l3_w":[-1000000.0,True,107,1],              # example value in W "0"
     #: [Number] The voltage coming from the grid on phase 1, generate device, device-ID
     "active_voltage_l1_v":[-1.0,True,108,1],                  # example value in V "231.55"
@@ -76,7 +77,7 @@ class BasePlugin:
     "active_voltage_l2_v":[-1.0,True,109,1],                  # example value in V "233.855"
     #: [Number] The voltage coming from the grid on phase 3, generate device, device-ID
     "active_voltage_l3_v":[-1.0,True,110,1],                  # example value in V "233.08"
-    #: [Number] The current multiplied by voltage which gives power of 3 phases, generate device, device-ID
+    #: [Number] The sum of the currents of the 3 phases, generate device, device-ID
     "active_current_a":[-1000000.0,True,120,1],               # example value in A "16.03"
     #: [Number] The current multiplied by voltage which gives power of phase 1, generate device, device-ID
     "active_current_l1_a":[-1000000.0,True,121,1],            # example value in A "16.0"
@@ -101,13 +102,13 @@ class BasePlugin:
     #: [Number] The current in phase 3 that does not produce used power, device generated, device-ID
     "active_reactive_current_l3_a":[-1000000.0,False,143,1],  # example value in A "0.3"
     #: [Number] The used power and non-productive power in 3 phases, device generated, device-ID
-    "active_apparent_power_va":[-1000000.0,True,150,1],       # example value in VA "20.842"
+    "active_apparent_power_va":[-1000000.0,False,150,1],       # example value in VA "20.842"
     #: [Number] The used power and non-productive power in phase 1, device generated, device-ID
-    "active_apparent_power_l1_va":[-1000000.0,True,151,1],    # example value in VA "7.454"
+    "active_apparent_power_l1_va":[-1000000.0,False,151,1],    # example value in VA "7.454"
     #: [Number] The used power and non-productive power in phase 2, device generated, device-ID
-    "active_apparent_power_l2_va":[-1000000.0,True,152,1],    # example value in VA "6.349"
+    "active_apparent_power_l2_va":[-1000000.0,False,152,1],    # example value in VA "6.349"
     #: [Number] The used power and non-productive power in phase 3, device generated, device-ID
-    "active_apparent_power_l3_va":[-1000000.0,True,153,1],    # example value in VA "7.039"
+    "active_apparent_power_l3_va":[-1000000.0,False,153,1],    # example value in VA "7.039"
     #: [Number] The non-productive power in 3 phases, device generated, device-ID
     "active_reactive_power_var":[-1000000.0,False,160,1],     # example value in VAr "20.842"
     #: [Number] The non-productive power in phase 1, device generated, device-ID
@@ -116,11 +117,11 @@ class BasePlugin:
     "active_reactive_power_l2_var":[-1000000.0,False,162,1],  # example value in VAr "6.349"
     #: [Number] The non-productive power in phase 3, device generated, device-ID
     "active_reactive_power_l3_var":[-1000000.0,False,163,1],  # example value in VAr "7.039"
-    #: [Number] Percentage of total power (used+non-used) realy used of phase 1, device generated, device-ID
+    #: [Number] Percentage of total power (used+non-used) really used of phase 1, device generated, device-ID
     "active_power_factor_l1":[-1,False,171,100],                # example value "0.925"
-    #: [Number] Percentage of total power (used+non-used) realy used of phase 2, device generated, device-ID
+    #: [Number] Percentage of total power (used+non-used) really used of phase 2, device generated, device-ID
     "active_power_factor_l2":[-1,False,172,100],                # example value "0.198"
-    #: [Number] Percentage of total power (used+non-used) realy used of phase 3, device generated, device-ID
+    #: [Number] Percentage of total power (used+non-used) really used of phase 3, device generated, device-ID
     "active_power_factor_l3":[-1,False,173,100],                # example value "0.05"
     #: [Number] frequency in Hz, device generated, device-ID=0 means do never generate device
     "active_frequency_hz":[-1.0,False,0,1]}                   # example value "49.89"
@@ -163,7 +164,7 @@ class BasePlugin:
             EarlierDone = True
             for x in self.elements:
                 # initial value is False and DeviceUnitID != 0, activate DeviceUnitID
-                if not self.elements[x][1] and self.elements[x][2] != 0:
+                if not self.elements[x][1] and self.elements[x][2] > 0:
                     self.elements[x][1] = True
                     EarlierDone = False
         if EarlierDone:

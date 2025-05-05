@@ -18,10 +18,10 @@ To access the data from the Wifi 3 Phase kWh meter, you have to enable the API. 
 The plugin is able to create several devices depending on the values that are read from your meter and that you enable when creating the hardware device. By default only the devices listed under Intial devices are created, even some of these may not be usefull for everyone but you can safely ignore those.
 Setting Mode 5 to 1, initially it is 0, enables all possible devices.
 Initial devices are, in the order the author thinks are most important:
- 1. An energy meter that shows the actual totaled energy of all 3 phases drawn and/or fed back (kWh) together with the average power per 5 minutes (Watt)
- 2. Three energy meters who show the actual power of each phase (Watt)
- 3. Three meters who show the current amperage per phase (A)
- 4. Three voltage meters who show the current voltage per phase (V)
+ 1. An energy meter that reads the counters of the totaled actual energy of all 3 phases drawn and/or fed back (kWh) together with the totaled average power per 5 minutes (Watt)
+ 2. Three energy meters who show the actual power of each phase (Watt); positive when used, negative when produced (PV or battery)
+ 3. Three meters who show the actual amperage per phase (A)
+ 4. Three meters who show the current voltage per phase (V)
  5. A Wi-Fi signal strength meter that shows the current signal strength from the Wi-Fi 3F kWh meter (%)
 
 Additional devices, enabled when Mode5 is 1:
